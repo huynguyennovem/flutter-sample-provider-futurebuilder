@@ -3,10 +3,10 @@
 This project demonstrates a solution for the combination between Provider and FutureBuilder
 
 #### Context
-- You start a Future task by an action (clicking a button for eg), not from initialization when starting a widget (inside initState() or didChangeDependencies())
+- You start a Future task by an action (clicking a button for eg), not from initialization when starting a widget (inside `initState()` or `didChangeDependencies()`)
 - You want to update Provider's data when the Future's connection state is done (the Future work is finished)
 - You want to follow the best practice: `The FutureBuilder's builder should only build widgets`
-- You are having an error `setState() or markNeedsBuild() called during build.` as below very common case:
+- You are having an error _(setState() or markNeedsBuild() called during build.)_ as below very common case:
 
 ```dart
 class DataProvider extends ChangeNotifier {
@@ -37,17 +37,22 @@ FutureBuilder(
 ),
 ```
 
+Error: 
+```shell
+setState() or markNeedsBuild() called during build.
+```
+
 #### Solution
 
--> Other logics should be separated to widget building to prevent side effects. 
--> Use `StreamSubscription` for subscribing the current `Future`
+- Other logics should be separated to widget building to prevent side effects. 
+- Use `StreamSubscription` for subscribing the current `Future`. And then implement other logics in Future stream's subscription.
 
 ```dart
 Future? _dataFuture;
 StreamSubscription? _dataSubscription;
+```
 
-...
-
+```dart
 FutureBuilder(
     future: _dataFuture,
     builder: (context, snapshot) {
@@ -62,16 +67,16 @@ FutureBuilder(
         },
     },
 ),
+```
 
-...
-
+```dart
 floatingActionButton: FloatingActionButton(
     onPressed: () => _getData(),
     child: const Icon(Icons.adb),
 ),
+```
 
-...
-
+```dart
 _getData() {
   _dataSubscription?.cancel();
   setState(() {
